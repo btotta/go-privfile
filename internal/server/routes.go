@@ -6,6 +6,7 @@ import (
 	docs "go-privfile/docs"
 	"go-privfile/internal/adapters"
 	"go-privfile/internal/domain/shortner"
+	"go-privfile/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -24,6 +25,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/swagger-ui/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	s.instantiateDependencies()
+
+	r.Use(middleware.CORSMiddleware())
 
 	r.GET("/", func(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, "/hello")
