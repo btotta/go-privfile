@@ -3,26 +3,39 @@ package server
 import (
 	"net/http"
 
+	docs "go-privfile/docs"
+	"go-privfile/internal/adapters"
+
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+)
+
+var (
+	helloHandler adapters.HelloHandler
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := gin.Default()
 
-	r.GET("/", s.HelloWorldHandler)
+	docs.SwaggerInfo.BasePath = "/"
+	r.GET("/swagger-ui/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	r.GET("/health", s.healthHandler)
+	s.instantiateDependencies()
+
+	r.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/hello")
+	})
+
+	hello := r.Group("/")
+	{
+		hello.GET("/hello", helloHandler.Hello)
+		hello.GET("/health", helloHandler.Health)
+	}
 
 	return r
 }
 
-func (s *Server) HelloWorldHandler(c *gin.Context) {
-	resp := make(map[string]string)
-	resp["message"] = "Hello World"
-
-	c.JSON(http.StatusOK, resp)
-}
-
-func (s *Server) healthHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, s.db.Health())
+func (s *Server) instantiateDependencies() {
+	helloHandler = adapters.NewHelloHandler(s.db.GetDB())
 }

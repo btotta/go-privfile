@@ -1,0 +1,42 @@
+definitions:
+  adapters.Hello:
+    properties:
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Health Check
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/adapters.Hello'
+      summary: Health
+      tags:
+      - Hello
+  /hello:
+    get:
+      consumes:
+      - application/json
+      description: Hello World
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/adapters.Hello'
+      summary: Hello
+      tags:
+      - Hello
+swagger: "2.0"
