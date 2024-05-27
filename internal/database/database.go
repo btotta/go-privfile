@@ -41,11 +41,15 @@ func New() Service {
 
 	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, username, password, database, port)
 	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logger.Error),
 	})
+
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	Migration(db)
+
 	dbInstance = &service{
 		db: db,
 	}

@@ -6,9 +6,71 @@ definitions:
       timestamp:
         type: string
     type: object
+  dtos.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  dtos.ShortnerRequest:
+    properties:
+      auto_redirect:
+        type: boolean
+      url:
+        type: string
+    type: object
+  shortner.Shortner:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      redirect:
+        type: boolean
+      redirect_count:
+        type: integer
+      updated_at:
+        type: string
+      url:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
+  /{code}:
+    get:
+      consumes:
+      - application/json
+      description: Redirect URL
+      parameters:
+      - description: Shortner Code
+        in: path
+        name: code
+        required: true
+        type: string
+      - description: Return Shortner Body
+        in: query
+        name: body
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "301":
+          description: Moved Permanently
+          schema:
+            $ref: '#/definitions/shortner.Shortner'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Redirect
+      tags:
+      - Shortner
   /health:
     get:
       consumes:
@@ -39,4 +101,34 @@ paths:
       summary: Hello
       tags:
       - Hello
+  /shorten:
+    post:
+      consumes:
+      - application/json
+      description: Shorten URL
+      parameters:
+      - description: Shortner Request
+        in: body
+        name: shorten
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ShortnerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shortner.Shortner'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Shorten
+      tags:
+      - Shortner
 swagger: "2.0"
