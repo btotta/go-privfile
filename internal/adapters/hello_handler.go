@@ -25,6 +25,7 @@ func NewHelloHandler(db *gorm.DB) HelloHandler {
 type Hello struct {
 	Message   string    `json:"message"`
 	Timestamp time.Time `json:"timestamp"`
+	Status    string    `json:"status"`
 }
 
 // @Summary Hello
@@ -38,6 +39,7 @@ func (h *helloHandler) Hello(c *gin.Context) {
 	c.JSON(200, Hello{
 		Message:   "Hello World",
 		Timestamp: time.Now(),
+		Status:    "OK",
 	})
 }
 
@@ -54,6 +56,7 @@ func (h *helloHandler) Health(c *gin.Context) {
 		c.JSON(500, Hello{
 			Message:   "Database is not available",
 			Timestamp: time.Now(),
+			Status:    "ERROR",
 		})
 
 		return
@@ -62,5 +65,6 @@ func (h *helloHandler) Health(c *gin.Context) {
 	c.JSON(200, Hello{
 		Message:   "Health Check",
 		Timestamp: time.Now(),
+		Status:    "OK",
 	})
 }
